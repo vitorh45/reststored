@@ -103,3 +103,32 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 POSTMON_URL = "http://api.postmon.com.br/v1/cep/%s"
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'stored.log',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'core': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
+    }
+}

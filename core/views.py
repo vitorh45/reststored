@@ -7,6 +7,8 @@ from core.models import Zipcode
 import requests
 import json
 
+import logging
+logger = logging.getLogger(__name__)
 
 @csrf_exempt
 def zipcode_add_n_list(request):
@@ -21,8 +23,10 @@ def zipcode_add_n_list(request):
             state = req.get('estado', None)
             obj = Zipcode(zipcode=zipcode, address=address, neighborhood=neighborhood, city=city, state=state)
             obj.save()
+            logger.info(u'Zipcode=%s added with success' % zipcode)
             return HttpResponse(status=201)
         except Exception, e:
+            logger.error(u'Zipcode invalid!')
             return HttpResponse(status=404)
 
     zipcodes = Zipcode.objects.all()
@@ -31,6 +35,7 @@ def zipcode_add_n_list(request):
         zipcodes = zipcodes[:limit]
     zipcodes_data = [{'zipcode': z.zipcode, 'address': z.address, 'neighborhood': z.neighborhood, 'city': z.city,
                           'state': z.state} for z in zipcodes]
+    logger.info(u'Showing the zipcodes')
     return HttpResponse(json.dumps(zipcodes_data))
 
 
@@ -39,8 +44,10 @@ def zipcode_detail_n_delete(request, zipcode):
     if request.method == 'DELETE':
         zipcode = get_object_or_404(Zipcode, zipcode=zipcode)
         zipcode.delete()
+        logger.info(u'Deleting the Zipcode=%s' % zipcode)
         return HttpResponse(status=204)
     zipcode = get_object_or_404(Zipcode, zipcode=zipcode)
     zipcode_data = {'zipcode': zipcode.zipcode, 'address': zipcode.address, 'neighborhood': zipcode.neighborhood,
                     'city': zipcode.city, 'state': zipcode.state}
+    logger.info(u'Showing the details of zipcode=%s' % zipcode.zipcode)
     return HttpResponse(json.dumps(zipcode_data))
